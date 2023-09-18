@@ -2,6 +2,8 @@ import { Bike } from "./bike";
 import { Rent } from "./rent";
 import { User } from "./user";
 import crypto from 'crypto'
+import { Location } from "./location";
+
 
 export class App {
     users: User[] = []
@@ -85,7 +87,7 @@ export class App {
     }
 
     
-    ListRent(): Rent[] {
+    listRent(): Rent[] {
         const AllRent = this.rents
         console.log("Lista de Reservas")
         console.log(AllRent)
@@ -93,10 +95,22 @@ export class App {
     }
 
     
-    ListBikes(): Bike[] {
+    listBikes(): Bike[] {
         const AllBikes = this.bikes
         console.log("Lista de Bikes")
         console.log(AllBikes)
         return AllBikes
     }
+
+    moveBike(bikeId: string, location: Location): void {
+        const bike = this.bikes.find(bike => bike.id === bikeId)
+        bike.position.latitude = location.latitude
+        bike.position.longitude = location.longitude
+    }
+}
+
+function differentHours(dt2: Date, dt1: Date) {
+  var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+  diff /= (60 * 60);
+  return Math.abs(diff);
 }
