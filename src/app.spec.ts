@@ -7,6 +7,12 @@ import { BikeNotFoundError } from "./error/bike-not-found-error"
 import { UnavailableBikeError } from "./error/unavailable-bike-error"
 import { UserNotFoundError } from "./error/user-not-found-error"
 import { DuplicateUserError } from "./error/duplicate-user-error"
+import { FakeUserRepo } from "./doubles/fake-user-repo"
+import { FakeBikeRepo } from "./doubles/fake-bike-repo"
+import { FakeRentRepo } from "./doubles/fake-rent-repo"
+import { UserRepo } from "../src/ports/user-repo"
+import { BikeRepo } from "../src/ports/bike-repo"
+import { RentRepo } from "../src/ports/rent-repo"
 
 describe('App', () => {
     it('should correctly calculate the rent amount', async () => {
@@ -14,7 +20,7 @@ describe('App', () => {
         const user = new User('Jose', 'jose@mail.com', '1234')
         await app.registerUser(user)
         const bike = new Bike('caloi mountainbike', 'mountain bike',
-            1234, 1234, 100.0, 'My bike', 5, [])
+            1234, 1234, 100.0, 'My bike', 5, [])  
         app.registerBike(bike)
         const clock = sinon.useFakeTimers();
         app.rentBike(bike.id, user.email)
@@ -114,5 +120,12 @@ describe('App', () => {
         expect(() => {
             app.removeUser('fake@mail.com')
         }).toThrowError(UserNotFoundError)
+    })
+    it ('should correctly register user', async () => {
+        const app = new App(userRepo, bikeRepo, rentRepo)
+        const user = new User('jose', 'jose@mail.com', '1234')
+        await app.registerUser(user)
+        await expect(app.findUser(user.email))
+            .resolves.toEqual(user)
     })
 })
